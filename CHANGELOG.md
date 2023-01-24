@@ -39,6 +39,8 @@ The versions follow [semantic versioning](https://semver.org).
 
 ### Added
 
+- Added `--json` flag to `lint` command (#654).
+
 ### Changed
 
 ### Deprecated
