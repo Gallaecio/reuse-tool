@@ -41,6 +41,9 @@ The versions follow [semantic versioning](https://semver.org).
 
 - Added `--json` flag to `lint` command (#654).
 
+- Added loglevel argument to pytest and skip one test if loglevel is too high
+  (#645).
+
 ### Changed
 
 ### Deprecated
@@ -48,6 +51,9 @@ The versions follow [semantic versioning](https://semver.org).
 ### Removed
 
 ### Fixed
+
+- Fixed automatic generation of Sphinx documentation via readthedocs.io by
+  adding a `.readthedocs.yaml` configuration file (#648)
 
 ### Security
 
