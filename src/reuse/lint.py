@@ -1,5 +1,6 @@
 # SPDX-FileCopyrightText: 2017 Free Software Foundation Europe e.V. <https://fsfe.org>
 # SPDX-FileCopyrightText: 2022 Florian Snow <florian@familysnow.net>
+# SPDX-FileCopyrightText: 2023 DB Systel GmbH
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -11,6 +12,7 @@ import contextlib
 import os
 import sys
 from gettext import gettext as _
+from textwrap import TextWrapper
 from typing import Iterable
 
 from . import __REUSE_version__
@@ -57,6 +59,7 @@ def lint(report: ProjectReport, out=sys.stdout) -> bool:
                 " {} of the REUSE Specification :-)"
             ).format(__REUSE_version__)
         )
+        out.write("\n")
     else:
         out.write(
             _(
@@ -64,7 +67,7 @@ def lint(report: ProjectReport, out=sys.stdout) -> bool:
                 "{} of the REUSE Specification :-("
             ).format(__REUSE_version__)
         )
-    out.write("\n")
+        lint_help(report, out=out)
 
     return success
 
@@ -321,6 +324,106 @@ def lint_summary(report: ProjectReport, out=sys.stdout) -> None:
         )
     )
     out.write("\n")
+
+
+def lint_help(report: ProjectReport, out=sys.stdout) -> None:
+    """Return help for next steps based on found REUSE issues"""
+    out.write("\n\n\n# ")
+    out.write(_("RECOMMENDATIONS"))
+    out.write("\n\n")
+
+    # Reformat help text to 80 characters, and indent nicely
+    wrapper = TextWrapper(
+        width=80,
+        drop_whitespace=True,
+        break_long_words=False,
+        initial_indent="* ",
+        subsequent_indent="  ",
+    )
+
+    # Bad licenses
+    if report.bad_licenses:
+        help_text = _(
+            "Fix bad licenses: At least one license in the LICENSES directory"
+            " and/or provided by 'SPDX-License-Identifier' tags is invalid."
+            " They are either not valid SPDX license identifiers or do not"
+            " start with 'LicenseRef-'. FAQ about custom licenses:"
+            " https://reuse.software/faq/#custom-license"
+        )
+        out.write("\n".join(wrapper.wrap(help_text)))
+        out.write("\n")
+
+    # Deprecated licenses
+    if report.deprecated_licenses:
+        help_text = _(
+            "Fix deprecated licenses: At least one of the licenses in the"
+            " LICENSES directory and/or provided by an"
+            " 'SPDX-License-Identifier' tag or in '.reuse/dep5' has been"
+            " deprecated by SPDX. The current list and their respective"
+            " recommended  new identifiers can be found here:"
+            " https://spdx.org/licenses/#deprecated"
+        )
+        out.write("\n".join(wrapper.wrap(help_text)))
+        out.write("\n")
+
+    # Licenses without file extension
+    if report.licenses_without_extension:
+        help_text = _(
+            "Fix licenses without file extension: At least one license text"
+            " file in the 'LICENSES' directory does not have a '.txt' file"
+            " extension. Please rename the file(s) accordingly."
+        )
+        out.write("\n".join(wrapper.wrap(help_text)))
+        out.write("\n")
+
+    # Missing licenses
+    if report.missing_licenses:
+        help_text = _(
+            "Fix missing licenses: For at least one of the license identifiers"
+            " provided by the 'SPDX-LicenseIdentifier' tags, there is no"
+            " corresponding license text file in the 'LICENSES' directory. For"
+            " SPDX license identifiers, you can simply run 'reuse download"
+            " --all' to get any missing ones. For custom licenses (starting"
+            " with 'LicenseRef-'), you need to add these files yourself."
+        )
+        out.write("\n".join(wrapper.wrap(help_text)))
+        out.write("\n")
+
+    # Unused licenses
+    if report.unused_licenses:
+        help_text = _(
+            "Fix unused licenses: At least one of the license text files in"
+            " 'LICENSES' is not referenced for any file, e.g. by an"
+            " 'SPDX-License-Identifier' tag. Please make sure that you either"
+            " tag the accordingly licensed files properly, or delete the"
+            " unused license text if you are sure that no file or code"
+            " snippet is licensed as such."
+        )
+        out.write("\n".join(wrapper.wrap(help_text)))
+        out.write("\n")
+
+    # Read errors
+    if report.read_errors:
+        help_text = _(
+            "Fix read errors: At least one of the files in your directory"
+            " cannot be read by the tool. Please check the file permissions."
+            " You will find the affected files at the top of the output as part"
+            " of the logged error messages."
+        )
+        out.write("\n".join(wrapper.wrap(help_text)))
+        out.write("\n")
+
+    # Files without copyright and/or licensing information
+    if report.files_without_copyright or report.files_without_licenses:
+        help_text = _(
+            "Fix missing copyright/license information: For one or more files,"
+            " the tool cannot find copyright and/or license information. Please"
+            " add it as a comment in the file header, ideally using the"
+            " 'SPDX-FileCopyrightText' tag. If that's not possible, you can use"
+            " adjacent '.license' files or the '.reuse/dep5' file."
+        )
+        out.write("\n".join(wrapper.wrap(help_text)))
+        out.write("\n")
 
 
 def add_arguments(parser):
