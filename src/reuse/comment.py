@@ -9,6 +9,7 @@
 # SPDX-FileCopyrightText: 2022 Nico Rikken <nico.rikken@fsfe.org>
 # SPDX-FileCopyrightText: 2022 Stefan Hynek <stefan.hynek@uni-goettingen.de>
 # SPDX-FileCopyrightText: 2022 Carmen Bianca Bakker <carmenbianca@fsfe.org>
+# SPDX-FileCopyrightText: 2022 Sebastian Crane <seabass@fsfe.org>
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -222,7 +223,7 @@ class CommentStyle:
         file.
 
         :raises CommentParseError: if *text* does not start with a parseable
-        comment block.
+            comment block.
         """
         if not any((cls.can_handle_single(), cls.can_handle_multi())):
             raise CommentParseError(f"{cls} cannot parse comments")
@@ -512,6 +513,7 @@ EXTENSION_COMMENT_STYLE_MAP = {
     ".bib": BibTexCommentStyle,
     ".c": CCommentStyle,
     ".cc": CCommentStyle,
+    ".cjs": CCommentStyle,
     ".cl": LispCommentStyle,
     ".clj": LispCommentStyle,
     ".cljc": LispCommentStyle,
@@ -540,6 +542,7 @@ EXTENSION_COMMENT_STYLE_MAP = {
     ".f90": FortranCommentStyle,
     ".f95": FortranCommentStyle,
     ".fish": PythonCommentStyle,
+    ".fnl": LispCommentStyle,
     ".fodp": UncommentableCommentStyle,
     ".fods": UncommentableCommentStyle,
     ".fodt": UncommentableCommentStyle,
@@ -618,6 +621,7 @@ EXTENSION_COMMENT_STYLE_MAP = {
     ".pot": PythonCommentStyle,
     ".ppt": UncommentableCommentStyle,
     ".pptx": UncommentableCommentStyle,
+    ".pro": PythonCommentStyle,
     ".proto": CCommentStyle,
     ".ps1": PythonCommentStyle,  # TODO: Multiline comments
     ".psm1": PythonCommentStyle,  # TODO: Multiline comments
@@ -644,7 +648,7 @@ EXTENSION_COMMENT_STYLE_MAP = {
     ".sbt": CCommentStyle,
     ".sc": CCommentStyle,  # SuperCollider source file
     ".scad": CCommentStyle,
-    ".scala": PythonCommentStyle,
+    ".scala": CCommentStyle,
     ".scm": LispCommentStyle,
     ".scpt": AppleScriptCommentStyle,
     ".scptd": AppleScriptCommentStyle,
@@ -659,6 +663,7 @@ EXTENSION_COMMENT_STYLE_MAP = {
     ".svg": UncommentableCommentStyle,
     ".swift": CCommentStyle,
     ".tex": TexCommentStyle,
+    ".textile": HtmlCommentStyle,
     ".thy": MlCommentStyle,
     ".toc": TexCommentStyle,
     ".toml": PythonCommentStyle,
@@ -689,11 +694,12 @@ EXTENSION_COMMENT_STYLE_MAP = {
 }
 
 EXTENSION_COMMENT_STYLE_MAP_LOWERCASE = {
-    k.lower(): v for k, v in EXTENSION_COMMENT_STYLE_MAP.items()
+    key.lower(): value for key, value in EXTENSION_COMMENT_STYLE_MAP.items()
 }
 
 FILENAME_COMMENT_STYLE_MAP = {
     ".bashrc": PythonCommentStyle,
+    ".clang-format": PythonCommentStyle,
     ".coveragerc": PythonCommentStyle,
     ".dockerignore": PythonCommentStyle,
     ".editorconfig": PythonCommentStyle,
@@ -739,7 +745,7 @@ FILENAME_COMMENT_STYLE_MAP = {
 }
 
 FILENAME_COMMENT_STYLE_MAP_LOWERCASE = {
-    k.lower(): v for k, v in FILENAME_COMMENT_STYLE_MAP.items()
+    key.lower(): value for key, value in FILENAME_COMMENT_STYLE_MAP.items()
 }
 
 

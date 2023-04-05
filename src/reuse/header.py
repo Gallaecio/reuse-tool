@@ -34,17 +34,6 @@ from jinja2.exceptions import TemplateNotFound
 from license_expression import ExpressionError
 
 from . import SpdxInfo
-from ._comment import (
-    EXTENSION_COMMENT_STYLE_MAP_LOWERCASE,
-    FILENAME_COMMENT_STYLE_MAP_LOWERCASE,
-    NAME_STYLE_MAP,
-    CommentCreateError,
-    CommentParseError,
-    CommentStyle,
-    EmptyCommentStyle,
-    PythonCommentStyle,
-    UncommentableCommentStyle,
-)
 from ._util import (
     _COPYRIGHT_STYLES,
     PathType,
@@ -56,6 +45,17 @@ from ._util import (
     make_copyright_line,
     merge_copyright_lines,
     spdx_identifier,
+)
+from .comment import (
+    EXTENSION_COMMENT_STYLE_MAP_LOWERCASE,
+    FILENAME_COMMENT_STYLE_MAP_LOWERCASE,
+    NAME_STYLE_MAP,
+    CommentCreateError,
+    CommentParseError,
+    CommentStyle,
+    EmptyCommentStyle,
+    PythonCommentStyle,
+    UncommentableCommentStyle,
 )
 from .project import Project
 
@@ -763,8 +763,10 @@ def run(args, project: Project, out=sys.stdout) -> int:
     )
     copyright_lines = (
         {
-            make_copyright_line(x, year=year, copyright_style=copyright_style)
-            for x in args.copyright
+            make_copyright_line(
+                item, year=year, copyright_style=copyright_style
+            )
+            for item in args.copyright
         }
         if args.copyright is not None
         else set()
