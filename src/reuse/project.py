@@ -155,7 +155,7 @@ class Project:
             dep5_result = _copyright_from_dep5(
                 self.relative_from_root(path), self._copyright
             )
-            if any(dep5_result):
+            if any([dep5_result.spdx_expressions, dep5_result.copyright_lines]):
                 _LOGGER.info(
                     _("'{path}' covered by .reuse/dep5").format(path=path)
                 )
@@ -177,10 +177,12 @@ class Project:
                     ).format(path=path)
                 )
 
+        spdx_expressions = dep5_result.spdx_expressions.union(file_result.spdx_expressions)
+        copyright_lines = dep5_result.copyright_lines.union(file_result.copyright_lines)
         return SpdxInfo(
-            dep5_result.spdx_expressions.union(file_result.spdx_expressions),
-            dep5_result.copyright_lines.union(file_result.copyright_lines),
-            str(path)
+            spdx_expressions,
+            copyright_lines,
+            license_path
         )
 
     def relative_from_root(self, path: Path) -> Path:
