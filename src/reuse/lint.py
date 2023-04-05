@@ -220,8 +220,6 @@ def format_json(report: ProjectReport) -> str:
     :return: String (representing JSON) that can be output to sys.stdout
     """
 
-    output = report.to_dict()
-
     def custom_serializer(obj):
         """Custom serializer for the dictionary output of ProjectReport
 
