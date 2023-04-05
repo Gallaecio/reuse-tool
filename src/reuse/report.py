@@ -105,11 +105,11 @@ class ProjectReport:  # pylint: disable=too-many-instance-attributes
             data["files"][str(file.path)] = {
                 "copyrights": [
                     {"value": cop, "source": file.spdxfile.info.license_path}
-                    for cop in copyrights
+                    for cop in copyrights if cop
                 ],
                 "licenses": [
                     {"value": lic, "source": file.spdxfile.info.license_path}
-                    for lic in file.spdxfile.licenses_in_file
+                    for lic in file.spdxfile.licenses_in_file if lic
                 ],
             }
 
@@ -350,6 +350,7 @@ class _File:  # pylint: disable=too-few-public-methods
         self.chk_sum: str = chk_sum
         self.licenses_in_file: List[str] = []
         self.copyright: str = None
+        self.info: SpdxInfo = None
 
 
 class FileReport:
@@ -424,7 +425,7 @@ class FileReport:
 
         # Copyright text
         report.spdxfile.copyright = "\n".join(sorted(spdx_info.copyright_lines))
-
+        report.spdxfile.info = spdx_info
         return report
 
     def __hash__(self):
