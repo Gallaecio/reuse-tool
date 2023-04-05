@@ -138,10 +138,14 @@ class Project:
 
         This function will return any SPDX information that it can find, both
         from within the file, the .license file and from the .reuse/dep5 file.
+
+        It also returns a single primary source path of the license/copyright
+        information, where 'primary' means '.license file' > 'header' > 'dep5'
         """
         path = _determine_license_path(path)
         _LOGGER.debug(f"searching '{path}' for SPDX information")
 
+        license_path = ""
         # NOTE This means that only one 'source' of licensing/copyright information is captured in SpdxInfo
         dep5_result = SpdxInfo(set(), set(), "")
         file_result = SpdxInfo(set(), set(), "")
@@ -155,6 +159,7 @@ class Project:
                 _LOGGER.info(
                     _("'{path}' covered by .reuse/dep5").format(path=path)
                 )
+                license_path = ".reuse/dep5"
 
         # Search the file for SPDX information.
         with path.open("rb") as fp:
@@ -162,6 +167,8 @@ class Project:
                 file_result = extract_spdx_info(
                     decoded_text_from_binary(fp, size=_HEADER_BYTES)
                 )
+                if any(file_result):
+                    license_path = str(path)
             except (ExpressionError, ParseError):
                 _LOGGER.error(
                     _(
