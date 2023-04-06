@@ -50,6 +50,8 @@ The versions follow [semantic versioning](https://semver.org).
   (#645).
 - `--add-license-concluded`, `--creator-person`, and `--creator-organization`
   added to `reuse spdx`. (#623)
+- Display recommendations for steps to fix found issues during a lint. This can
+  be disabled with the `--no-recommendations` flag. (#698)
 
 ### Changed
 
