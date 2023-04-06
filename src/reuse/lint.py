@@ -24,10 +24,21 @@ def add_arguments(parser):
         "-q", "--quiet", action="store_true", help="Prevents output"
     )
     mutex_group = parser.add_mutually_exclusive_group()
-    mutex_group.add_argument("-j", "--json", action="store_true", help="Formats output as JSON")
-    mutex_group.add_argument("-p", "--plain", action="store_true", help="Formats output as plain text")
-    mutex_group.add_argument("--format", nargs="?", choices=("json", "plain"),
-                             help="Formats output using the chosen formatter")
+    mutex_group.add_argument(
+        "-j", "--json", action="store_true", help="Formats output as JSON"
+    )
+    mutex_group.add_argument(
+        "-p",
+        "--plain",
+        action="store_true",
+        help="Formats output as plain text",
+    )
+    mutex_group.add_argument(
+        "--format",
+        nargs="?",
+        choices=("json", "plain"),
+        help="Formats output using the chosen formatter",
+    )
 
 
 # pylint: disable=too-many-locals, too-many-branches, too-many-statements
@@ -150,14 +161,7 @@ def format_plain(report: ProjectReport) -> str:
         ),
         (
             _("Licenses without file extension:"),
-            ", ".join(
-                [
-                    file
-                    for file in data["non_compliant"][
-                        "licenses_without_extension"
-                    ]
-                ]
-            ),
+            ", ".join(data["non_compliant"]["licenses_without_extension"]),
         ),
         (
             _("Missing licenses:"),
@@ -229,13 +233,15 @@ def format_json(report: ProjectReport) -> str:
             return str(obj)
         if isinstance(obj, set):
             return list(obj)
-        raise TypeError(f"Object of type {obj.__class__.__name__} is not JSON serializable")
+        raise TypeError(
+            f"Object of type {obj.__class__.__name__} is not JSON serializable"
+        )
 
     return json.dumps(
         report.to_dict(),
         indent=2,
         # Serialize sets to lists
-        default=custom_serializer
+        default=custom_serializer,
     )
 
 

@@ -78,7 +78,11 @@ _IGNORE_FILE_PATTERNS.extend(_IGNORE_SPDX_PATTERNS)
 # TODO Make this into a dataclass, see #669
 SpdxInfo = NamedTuple(
     "SpdxInfo",
-    [("spdx_expressions", Set[Expression]), ("copyright_lines", Set[str]), ("license_path", str)],
+    [
+        ("spdx_expressions", Set[Expression]),
+        ("copyright_lines", Set[str]),
+        ("license_path", str),
+    ],
 )
 
 
