@@ -26,7 +26,9 @@ def _write_element(element, out=sys.stdout):
     out.write("\n")
 
 
-def lint(report: ProjectReport, out=sys.stdout) -> bool:
+def lint(
+    report: ProjectReport, out=sys.stdout, no_recommendations=False
+) -> bool:
     """Lint the entire project."""
     bad_licenses_result = lint_bad_licenses(report, out)
     deprecated_result = lint_deprecated_licenses(report, out)
@@ -67,7 +69,8 @@ def lint(report: ProjectReport, out=sys.stdout) -> bool:
                 "{} of the REUSE Specification :-("
             ).format(__REUSE_version__)
         )
-        lint_help(report, out=out)
+        if not no_recommendations:
+            lint_help(report, out=out)
 
     return success
 
@@ -439,6 +442,11 @@ def add_arguments(parser):
     parser.add_argument(
         "-q", "--quiet", action="store_true", help=_("prevents output")
     )
+    parser.add_argument(
+        "--no-recommendations",
+        action="store_true",
+        help=_("do not recommend steps to fix found issues"),
+    )
 
 
 def run(args, project: Project, out=sys.stdout):
@@ -450,6 +458,8 @@ def run(args, project: Project, out=sys.stdout):
     with contextlib.ExitStack() as stack:
         if args.quiet:
             out = stack.enter_context(open(os.devnull, "w", encoding="utf-8"))
-        result = lint(report, out=out)
+        result = lint(
+            report, out=out, no_recommendations=args.no_recommendations
+        )
 
     return 0 if result else 1
